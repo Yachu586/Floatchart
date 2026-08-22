@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FloatChat — Ocean ARGO Explorer</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+    <!-- Plotly.js CDN -->
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation / Information -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo-icon">🌊</div>
+                <div class="brand-text">
+                    <h1>FloatChat</h1>
+                    <span class="badge">ARGO MVP</span>
+                </div>
+            </div>
+            
+            <p class="tagline">Natural language interface for Indian Ocean ARGO float observations.</p>
+
+            <div class="quick-prompts-section">
+                <h3><span class="icon">✨</span> Demo Query Shortcuts</h3>
+                <div class="prompts-list">
+                    <button class="prompt-chip" onclick="sendPresetQuery('What was the average temperature in Arabian Sea in January?')">
+                        <span class="chip-icon">🌡️</span> Average Temp (Arabian Sea, Jan)
+                    </button>
+                    <button class="prompt-chip" onclick="sendPresetQuery('Show me the depth profile for float 2901551')">
+                        <span class="chip-icon">📉</span> Depth Profile (Float 2901551)
+                    </button>
+                    <button class="prompt-chip" onclick="sendPresetQuery('Show me all floats on a map')">
+                        <span class="chip-icon">🗺️</span> All Floats Map
+                    </button>
+                    <button class="prompt-chip" onclick="sendPresetQuery('Compare salinity between two floats')">
+                        <span class="chip-icon">⚖️</span> Compare Salinity Profiles
+                    </button>
+                    <button class="prompt-chip" onclick="sendPresetQuery('Show me only good-quality temperature readings for float 2901551')">
+                        <span class="chip-icon">🛡️</span> QC-Filtered Good Readings
+                    </button>
+                    <button class="prompt-chip" onclick="sendPresetQuery('Which floats have chlorophyll data near the equator?')">
+                        <span class="chip-icon">🌿</span> BGC Chlorophyll (Equator)
+                    </button>
+                </div>
+            </div>
+
+            <div class="system-stats">
+                <div class="stat-card">
+                    <span class="stat-num">8</span>
+                    <span class="stat-label">ARGO Floats</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-num">960</span>
+                    <span class="stat-label">Depth Readings</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-num">4</span>
+                    <span class="stat-label">Ocean Regions</span>
+                </div>
+            </div>
+
+            <div class="footer-note">
+                Powered by FastAPI • SQLite • Plotly • Leaflet
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <main class="chat-main">
+            <header class="chat-header">
+                <div class="header-info">
+                    <h2>Conversational Query Engine</h2>
+                    <span class="status-indicator"><span class="dot"></span> Database Ready (SQLite)</span>
+                </div>
+                <div class="engine-badge" id="engineBadge">Engine: Auto-Detect</div>
+            </header>
+
+            <div class="messages-container" id="messagesContainer">
+                <!-- Welcome Assistant Message -->
+                <div class="message assistant-message">
+                    <div class="avatar">🌊</div>
+                    <div class="message-content">
+                        <p>Welcome to <strong>FloatChat</strong>! I can analyze oceanographic data from ARGO floats across the Indian Ocean.</p>
+                        <p>Ask a question in plain English or select one of the preset demo queries on the left to get started!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Container -->
+            <div class="input-area">
+                <form id="chatForm" onsubmit="handleFormSubmit(event)">
+                    <div class="input-wrapper">
+                        <input type="text" id="userInput" placeholder="Ask about ocean temperatures, salinity, depth profiles, or float positions..." autocomplete="off" required />
+                        <button type="submit" id="sendBtn">
+                            <span>Send</span>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Application Script -->
+    <script src="/static/app.js"></script>
+</body>
+</html>
