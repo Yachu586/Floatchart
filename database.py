@@ -1,5 +1,6 @@
 import sqlite3
 import re
+import os
 from typing import Dict, Any, List, Tuple
 
 DB_PATH = "argo_data.db"
@@ -15,6 +16,13 @@ FORBIDDEN_KEYWORDS = [
     "INSERT", "UPDATE", "DELETE", "DROP", "ALTER", "CREATE", "TRUNCATE", 
     "EXEC", "EXECUTE", "REPLACE", "PRAGMA", "ATTACH", "DETACH"
 ]
+
+def ensure_database_exists():
+    """Check if database exists and has data; if not, trigger seed generator."""
+    if not os.path.exists(DB_PATH) or os.path.getsize(DB_PATH) == 0:
+        print("[Database] argo_data.db missing or empty. Seeding database...")
+        from seed_db import seed_database
+        seed_database()
 
 def is_safe_sql(sql: str) -> Tuple[bool, str]:
     """Validate that the query is a safe, read-only SELECT query."""
@@ -36,11 +44,17 @@ def is_safe_sql(sql: str) -> Tuple[bool, str]:
 
 def execute_read_query(sql: str) -> Dict[str, Any]:
     """Execute a safe read-only SQL query against the SQLite database."""
+    ensure_database_exists()
+
     safe, msg = is_safe_sql(sql)
     if not safe:
         raise ValueError(f"Security check failed: {msg}")
 
-    conn = sqlite3.connect(f"file:{DB_PATH}?mode=ro", uri=True)
+    try:
+        conn = sqlite3.connect(f"file:{DB_PATH}?mode=ro", uri=True)
+    except Exception:
+        conn = sqlite3.connect(DB_PATH)
+
     conn.row_factory = sqlite3.Row
     cursor = conn.cursor()
 

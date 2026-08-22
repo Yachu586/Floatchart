@@ -5,12 +5,21 @@ from pydantic import BaseModel
 import os
 
 from llm_engine import call_llm_nl_to_sql
+from database import ensure_database_exists
 
 app = FastAPI(
     title="FloatChat MVP",
     description="Conversational Ocean ARGO Float Data Explorer",
     version="1.0.0"
 )
+
+@app.on_event("startup")
+def on_startup():
+    """Ensure database is seeded when container starts up on cloud hosts like Render."""
+    try:
+        ensure_database_exists()
+    except Exception as e:
+        print(f"[Startup Warning] Failed to seed database: {e}")
 
 class ChatRequest(BaseModel):
     message: str
@@ -25,7 +34,7 @@ async def chat_endpoint(request: ChatRequest):
         result = call_llm_nl_to_sql(request.message)
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error processing query: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error processing request: {str(e)}")
 
 # Serve static files for frontend UI
 if os.path.exists("static"):
